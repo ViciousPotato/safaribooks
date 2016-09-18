@@ -16,7 +16,7 @@
     <item id="ncxtoc" media-type="application/x-dtbncx+xml" href="toc.ncx"/>
     <item id="cover-image" href="cover-image.jpg" media-type="image/jpeg"/>
     {% for item in info["items"] %}
-    <item id="{{item["id"]}}" href="{{item["href"]}}" media-type="{{item["media_type"]}}"/>
+    <item id="{{item["id"]}}" href="{{item["href"].split('#')[0]}}" media-type="{{item["media_type"]}}"/>
     {% endfor %}
   </manifest>
   <spine toc="ncxtoc">

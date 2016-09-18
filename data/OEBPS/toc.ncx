@@ -16,7 +16,7 @@
       <navLabel>
         <text>{{item["label"]}}</text>
       </navLabel>
-      <content src="{{item["href"]}}"/>
+      <content src="{{item["href"].split('#')[0]}}"/>
     </navPoint>
     {% endfor %}
   </navMap>

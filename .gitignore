@@ -2,3 +2,4 @@ output/
 crawl.sh
 *.ipynb
 *.pyc
+*.epub

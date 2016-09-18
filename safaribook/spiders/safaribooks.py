@@ -84,7 +84,6 @@ class SafariBooksSpider(scrapy.Spider):
                              callback=partial(self.parse_content_img, img))
 
   def parse_toc(self, response):
-    self.logger.info("Got toc")
     toc = eval(response.body)
     cover_path, = re.match(r'<img src="(.*?)" alt.+', toc["thumbnail_tag"]).groups()
     yield scrapy.Request(self.host + cover_path,
@@ -101,4 +100,5 @@ class SafariBooksSpider(scrapy.Spider):
       f.write(template.render(info=toc))
 
   def closed(self, reason):
-    shutil.make_archive('output.epub', 'zip', './output/')
+    shutil.make_archive('output', 'zip', './output/')
+    shutil.move('output.zip', 'output.epub')
