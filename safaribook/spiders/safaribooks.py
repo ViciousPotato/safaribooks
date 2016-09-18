@@ -10,12 +10,12 @@ from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from scrapy.shell import inspect_response
 from jinja2 import Template
+from BeautifulSoup import BeautifulSoup
 
 null = None
 false = False
 
-PAGE_TEMPLATE="""
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+PAGE_TEMPLATE="""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <body>
@@ -70,13 +70,13 @@ class SafariBooksSpider(scrapy.Spider):
 
   def parse_page_json(self, title, bookid, response):
     page_json = eval(response.body)
-    self.logger.info("Got response: ", page_json)
     yield scrapy.Request(page_json["content"], callback=partial(self.parse_page, title, bookid, page_json["full_path"]))
 
   def parse_page(self, title, bookid, path, response):
     template = Template(PAGE_TEMPLATE)
     with codecs.open("./output/OEBPS/" + path, "wb", "utf-8") as f:
-      f.write(template.render(body=response.body.decode('utf8')))
+      pretty = BeautifulSoup(response.body).prettify()
+      f.write(template.render(body=pretty.decode('utf8')))
 
     for img in response.xpath("//img/@src").extract():
       if img:
@@ -99,3 +99,6 @@ class SafariBooksSpider(scrapy.Spider):
     template = Template(file("./output/OEBPS/toc.ncx").read())
     with codecs.open("./output/OEBPS/toc.ncx", "wb", "utf-8") as f:
       f.write(template.render(info=toc))
+
+  def closed(self, reason):
+    shutil.make_archive('output.epub', 'zip', './output/')
