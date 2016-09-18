@@ -1,3 +1,4 @@
 output/
 crawl.sh
 *.ipynb
+*.pyc

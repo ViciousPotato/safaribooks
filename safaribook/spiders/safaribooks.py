@@ -95,3 +95,7 @@ class SafariBooksSpider(scrapy.Spider):
     template = Template(file("./output/OEBPS/content.opf").read())
     with codecs.open("./output/OEBPS/content.opf", "wb", "utf-8") as f:
       f.write(template.render(info=toc))
+
+    template = Template(file("./output/OEBPS/toc.ncx").read())
+    with codecs.open("./output/OEBPS/toc.ncx", "wb", "utf-8") as f:
+      f.write(template.render(info=toc))
