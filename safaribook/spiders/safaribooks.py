@@ -34,6 +34,7 @@ class SafariBooksSpider(scrapy.Spider):
     self.user = user
     self.password = password
     self.bookid = bookid
+    self.book_name = ''
     self.info = {}
     self.initialize_output()
 
@@ -85,6 +86,7 @@ class SafariBooksSpider(scrapy.Spider):
 
   def parse_toc(self, response):
     toc = eval(response.body)
+    self.book_name = toc['title_safe']
     cover_path, = re.match(r'<img src="(.*?)" alt.+', toc["thumbnail_tag"]).groups()
     yield scrapy.Request(self.host + cover_path,
                          callback=partial(self.parse_cover_img, "cover-image"))
@@ -100,5 +102,5 @@ class SafariBooksSpider(scrapy.Spider):
       f.write(template.render(info=toc))
 
   def closed(self, reason):
-    shutil.make_archive('output', 'zip', './output/')
-    shutil.move('output.zip', 'output.epub')
+    shutil.make_archive(self.book_name, 'zip', './output/')
+    shutil.move(self.book_name + '.zip', self.book_name + '.epub')
