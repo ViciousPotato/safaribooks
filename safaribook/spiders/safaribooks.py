@@ -10,7 +10,7 @@ from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from scrapy.shell import inspect_response
 from jinja2 import Template
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 null = None
 false = False
@@ -77,7 +77,8 @@ class SafariBooksSpider(scrapy.Spider):
     template = Template(PAGE_TEMPLATE)
     with codecs.open("./output/OEBPS/" + path, "wb", "utf-8") as f:
       pretty = BeautifulSoup(response.body).prettify()
-      f.write(template.render(body=pretty.decode('utf8')))
+#      f.write(template.render(body=pretty.decode('utf8')))
+      f.write(template.render(body=pretty))
 
     for img in response.xpath("//img/@src").extract():
       if img:
