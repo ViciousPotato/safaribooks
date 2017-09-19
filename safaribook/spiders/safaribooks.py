@@ -16,11 +16,8 @@ null = None
 false = False
 
 PAGE_TEMPLATE="""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title></title></head>
 {{body}}
-</body>
 </html>"""
 
 class SafariBooksSpider(scrapy.Spider):
@@ -76,8 +73,7 @@ class SafariBooksSpider(scrapy.Spider):
   def parse_page(self, title, bookid, path, response):
     template = Template(PAGE_TEMPLATE)
     with codecs.open("./output/OEBPS/" + path, "wb", "utf-8") as f:
-      pretty = BeautifulSoup(response.body).prettify()
-#      f.write(template.render(body=pretty.decode('utf8')))
+      pretty = BeautifulSoup(response.body).find('body').prettify()
       f.write(template.render(body=pretty))
 
     for img in response.xpath("//img/@src").extract():
