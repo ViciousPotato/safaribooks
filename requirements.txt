@@ -1,2 +1,4 @@
-scrapy
+scrapy>=1.4.0
 jinja2
+twisted==16.4.1
+beautifulsoup4
