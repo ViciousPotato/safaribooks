@@ -6,10 +6,10 @@ from functools import partial
 import codecs
 
 import scrapy
-from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from scrapy.shell import inspect_response
 from jinja2 import Template
+import scrapy.spiders
 from bs4 import BeautifulSoup
 
 null = None
@@ -20,7 +20,7 @@ PAGE_TEMPLATE="""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 {{body}}
 </html>"""
 
-class SafariBooksSpider(scrapy.Spider):
+class SafariBooksSpider(scrapy.spiders.Spider):
   toc_url = 'https://www.safaribooksonline.com/nest/epub/toc/?book_id='
   name = "SafariBooks"
   #allowed_domains = []
@@ -36,7 +36,7 @@ class SafariBooksSpider(scrapy.Spider):
     self.initialize_output()
 
   def initialize_output(self):
-    shutil.rmtree('output/')
+    shutil.rmtree('output/', ignore_errors=True)
     shutil.copytree('data/', 'output/')
 
   def parse(self, response):
