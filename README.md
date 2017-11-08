@@ -10,11 +10,13 @@ WARNING: use at your own risk.
 
 2. Make sure you have Python 2 installed (Tested version Python 2.7).
 
-   Run pip install -r requirements to install dependency
+   Run `pip install -r requirements.txt` to install dependency
+
+3. Download a book.
    
-   Then run `./craw.sh user password bookid`.
+  `./crawl.sh user password bookid`.
    
-   bookid is the id in url such as 9781617291920 `https://www.safaribooksonline.com/library/view/real-world-machine-learning/9781617291920/kindle_split_011.html`.
+   `bookid` is the id in url such as `9781617291920` in `https://www.safaribooksonline.com/library/view/real-world-machine-learning/9781617291920/kindle_split_011.html`.
    
    An epub and a mobi file will be generated.
    

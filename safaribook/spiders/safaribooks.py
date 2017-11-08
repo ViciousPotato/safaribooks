@@ -6,24 +6,22 @@ from functools import partial
 import codecs
 
 import scrapy
-from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from scrapy.shell import inspect_response
 from jinja2 import Template
-from BeautifulSoup import BeautifulSoup
+import scrapy.spiders
+from bs4 import BeautifulSoup
 
 null = None
 false = False
+true = True
 
 PAGE_TEMPLATE="""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title></title></head>
 {{body}}
-</body>
 </html>"""
 
-class SafariBooksSpider(scrapy.Spider):
+class SafariBooksSpider(scrapy.spiders.Spider):
   toc_url = 'https://www.safaribooksonline.com/nest/epub/toc/?book_id='
   name = "SafariBooks"
   #allowed_domains = []
@@ -39,7 +37,7 @@ class SafariBooksSpider(scrapy.Spider):
     self.initialize_output()
 
   def initialize_output(self):
-    shutil.rmtree('output/')
+    shutil.rmtree('output/', ignore_errors=True)
     shutil.copytree('data/', 'output/')
 
   def parse(self, response):
@@ -76,8 +74,8 @@ class SafariBooksSpider(scrapy.Spider):
   def parse_page(self, title, bookid, path, response):
     template = Template(PAGE_TEMPLATE)
     with codecs.open("./output/OEBPS/" + path, "wb", "utf-8") as f:
-      pretty = BeautifulSoup(response.body).prettify()
-      f.write(template.render(body=pretty.decode('utf8')))
+      pretty = BeautifulSoup(response.body).find('body').prettify()
+      f.write(template.render(body=pretty))
 
     for img in response.xpath("//img/@src").extract():
       if img:
@@ -103,4 +101,4 @@ class SafariBooksSpider(scrapy.Spider):
 
   def closed(self, reason):
     shutil.make_archive(self.book_name, 'zip', './output/')
-    shutil.move(self.book_name + '.zip', self.book_name + '.epub')
+    shutil.move(self.book_name + '.zip', self.book_name + '-' + self.bookid + '.epub')
