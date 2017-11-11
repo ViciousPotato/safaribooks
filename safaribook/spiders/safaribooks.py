@@ -79,12 +79,14 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
     for img in response.xpath("//img/@src").extract():
       if img:
+        img = img.replace('../','') # fix for books which are one level down
         yield scrapy.Request(self.host + '/library/view/' + title + '/' + bookid + '/' + img,
                              callback=partial(self.parse_content_img, img))
 
   def parse_toc(self, response):
     toc = eval(response.body)
     self.book_name = toc['title_safe']
+    self.book_title = toc['title'].replace(' ','_').replace(':',' -') # to be used for filename
     cover_path, = re.match(r'<img src="(.*?)" alt.+', toc["thumbnail_tag"]).groups()
     yield scrapy.Request(self.host + cover_path,
                          callback=partial(self.parse_cover_img, "cover-image"))
@@ -101,4 +103,4 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
   def closed(self, reason):
     shutil.make_archive(self.book_name, 'zip', './output/')
-    shutil.move(self.book_name + '.zip', self.book_name + '-' + self.bookid + '.epub')
+    shutil.move(self.book_name + '.zip', self.book_title + '-' + self.bookid + '.epub')
