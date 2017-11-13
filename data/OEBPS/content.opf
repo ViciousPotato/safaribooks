@@ -2,9 +2,9 @@
 <package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="bookid">
   <metadata>
     <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="bookid">urn:isbn:{{info["book_id"]}}</dc:identifier>
-    <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["title"]}}</dc:title>
+    <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["title"]|escape}}</dc:title>
     <!-- <dc:rights xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:rights> -->
-    <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["publisher"]["name"]}}</dc:publisher>
+    <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["publisher"]["name"]|escape}}</dc:publisher>
     <!-- <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:subject> -->
     <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["pub_date"]}}</dc:date>
     <!-- <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:description> -->
