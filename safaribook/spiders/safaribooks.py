@@ -73,6 +73,12 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
   def parse_page(self, title, bookid, path, response):
     template = Template(PAGE_TEMPLATE)
+
+    # path might have nested directory
+    dirs_to_make = os.path.join('./output/OEBPS', os.path.dirname(path))
+    if not os.path.exists(dirs_to_make):
+      os.makedirs(dirs_to_make)
+
     with codecs.open("./output/OEBPS/" + path, "wb", "utf-8") as f:
       pretty = BeautifulSoup(response.body).find('body').prettify()
       f.write(template.render(body=pretty))
