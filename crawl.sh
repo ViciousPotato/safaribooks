@@ -1,8 +1,6 @@
 #!/bin/bash
 
-bookid_regex="\d+"
-
-if ! [[ $3 =~ \d+ ]]; then
+if ! [[ $3 =~ [0-9]+ ]]; then
     echo "Please give a pure digit book id, $3 is not an acceptable book id."
     exit -1
 fi
