@@ -92,7 +92,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
   def parse_toc(self, response):
     toc = eval(response.body)
     self.book_name = toc['title_safe']
-    self.book_title = toc['title'].replace(' ','_').replace(':',' -') # to be used for filename
+    self.book_title = re.sub(r'["%*/:<>?\\|~\s]', r'_', toc['title']) # to be used for filename
     cover_path, = re.match(r'<img src="(.*?)" alt.+', toc["thumbnail_tag"]).groups()
     yield scrapy.Request(self.host + cover_path,
                          callback=partial(self.parse_cover_img, "cover-image"))
