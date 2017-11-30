@@ -34,6 +34,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
     self.bookid = bookid
     self.book_name = ''
     self.info = {}
+    self._stage_toc = False
     self.initialize_output()
 
   def initialize_output(self):
@@ -47,7 +48,8 @@ class SafariBooksSpider(scrapy.spiders.Spider):
       callback=self.after_login)
 
   def after_login(self, response):
-    if not 'Recommended For You' in response.body:
+    # Loose role to decide if user signed in successfully.
+    if '/login' in response.url:
       self.logger.error("Failed login")
       return
     yield scrapy.Request(self.toc_url+self.bookid, callback=self.parse_toc)
@@ -90,7 +92,14 @@ class SafariBooksSpider(scrapy.spiders.Spider):
                              callback=partial(self.parse_content_img, img))
 
   def parse_toc(self, response):
-    toc = eval(response.body)
+    try:
+      toc = eval(response.body)
+    except:
+      self.logger.error("Failed evaluating toc body: %s" % response.body)
+      return
+
+    self._stage_toc = True
+
     self.book_name = toc['title_safe']
     self.book_title = re.sub(r'["%*/:<>?\\|~\s]', r'_', toc['title']) # to be used for filename
     cover_path, = re.match(r'<img src="(.*?)" alt.+', toc["thumbnail_tag"]).groups()
@@ -108,5 +117,9 @@ class SafariBooksSpider(scrapy.spiders.Spider):
       f.write(template.render(info=toc))
 
   def closed(self, reason):
+    if self._stage_toc == False:
+      self.logger.info("Did not even got toc, ignore generated file operation.")
+      return
+
     shutil.make_archive(self.book_name, 'zip', './output/')
     shutil.move(self.book_name + '.zip', self.book_title + '-' + self.bookid + '.epub')
