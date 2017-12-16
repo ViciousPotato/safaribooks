@@ -1,25 +1,29 @@
 import os
 import re
-import ast
+import json
 import shutil
-from functools import partial
 import codecs
+from functools import partial
 
 import scrapy
 from scrapy.http import HtmlResponse
 from scrapy.shell import inspect_response
 from jinja2 import Template
-import scrapy.spiders
 from bs4 import BeautifulSoup
-
-null = None
-false = False
-true = True
 
 PAGE_TEMPLATE="""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title></title></head>
 {{body}}
 </html>"""
+
+def url_base(u):
+  # Actually I can use urlparse, but don't want to fall into the trap of py2 py3
+  # Does this code actually support py3?
+  try:
+    idx = u.rindex('/')
+  except:
+    idx = len(u)
+  return u[:idx]
 
 class SafariBooksSpider(scrapy.spiders.Spider):
   toc_url = 'https://www.safaribooksonline.com/nest/epub/toc/?book_id='
@@ -70,10 +74,11 @@ class SafariBooksSpider(scrapy.spiders.Spider):
       f.write(response.body)
 
   def parse_page_json(self, title, bookid, response):
-    page_json = eval(response.body)
-    yield scrapy.Request(page_json["content"], callback=partial(self.parse_page, title, bookid, page_json["full_path"]))
+    page_json = json.loads(response.body)
+    yield scrapy.Request(page_json["content"],
+                         callback=partial(self.parse_page, title, bookid, page_json["full_path"], page_json["images"]))
 
-  def parse_page(self, title, bookid, path, response):
+  def parse_page(self, title, bookid, path, images, response):
     template = Template(PAGE_TEMPLATE)
 
     # path might have nested directory
@@ -85,15 +90,15 @@ class SafariBooksSpider(scrapy.spiders.Spider):
       pretty = BeautifulSoup(response.body).find('body').prettify()
       f.write(template.render(body=pretty))
 
-    for img in response.xpath("//img/@src").extract():
+    for img in images:
       if img:
-        img = img.replace('../','') # fix for books which are one level down
+        img = img.replace('../', '') # fix for books which are one level down
         yield scrapy.Request(self.host + '/library/view/' + title + '/' + bookid + '/' + img,
                              callback=partial(self.parse_content_img, img))
 
   def parse_toc(self, response):
     try:
-      toc = eval(response.body)
+      toc = json.loads(response.body)
     except:
       self.logger.error("Failed evaluating toc body: %s" % response.body)
       return
@@ -102,11 +107,14 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
     self.book_name = toc['title_safe']
     self.book_title = re.sub(r'["%*/:<>?\\|~\s]', r'_', toc['title']) # to be used for filename
+
     cover_path, = re.match(r'<img src="(.*?)" alt.+', toc["thumbnail_tag"]).groups()
     yield scrapy.Request(self.host + cover_path,
                          callback=partial(self.parse_cover_img, "cover-image"))
+
     for item in toc["items"]:
-      yield scrapy.Request(self.host + item["url"], callback=partial(self.parse_page_json, toc["title_safe"], toc["book_id"]))
+      yield scrapy.Request(self.host + item["url"],
+                           callback=partial(self.parse_page_json, toc["title_safe"], toc["book_id"]))
 
     template = Template(file("./output/OEBPS/content.opf").read())
     with codecs.open("./output/OEBPS/content.opf", "wb", "utf-8") as f:
