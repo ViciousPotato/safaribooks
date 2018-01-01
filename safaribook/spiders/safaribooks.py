@@ -12,7 +12,13 @@ from jinja2 import Template
 from bs4 import BeautifulSoup
 
 PAGE_TEMPLATE="""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title></title></head>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title></title>
+<style>
+p.pre {
+    font-family: monospace;
+    white-space: pre;
+}
+</style></head>
 {{body}}
 </html>"""
 
@@ -65,7 +71,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
   def parse_content_img(self, img, response):
     img_path = os.path.join("./output/OEBPS", img)
- 
+
     img_dir = os.path.dirname(img_path)
     if not os.path.exists(img_dir):
       os.makedirs(img_dir)
@@ -87,7 +93,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
       os.makedirs(dirs_to_make)
 
     with codecs.open("./output/OEBPS/" + path, "wb", "utf-8") as f:
-      pretty = BeautifulSoup(response.body).find('body').prettify()
+      pretty = BeautifulSoup(response.body).find('body')
       f.write(template.render(body=pretty))
 
     for img in images:
