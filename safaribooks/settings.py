@@ -9,14 +9,14 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'safaribook'
+BOT_NAME = 'safaribooks'
 
-SPIDER_MODULES = ['safaribook.spiders']
-NEWSPIDER_MODULE = 'safaribook.spiders'
+SPIDER_MODULES = ['safaribooks.spiders']
+NEWSPIDER_MODULE = 'safaribooks.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'safaribook (+http://www.yourdomain.com)'
+#USER_AGENT = 'safaribooks (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -47,13 +47,13 @@ DOWNLOAD_DELAY = 0.25
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'safaribook.middlewares.MyCustomSpiderMiddleware': 543,
+#    'safaribooks.middlewares.MyCustomSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'safaribook.middlewares.MyCustomDownloaderMiddleware': 543,
+#    'safaribooks.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,7 +65,7 @@ DOWNLOAD_DELAY = 0.25
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'safaribook.pipelines.SomePipeline': 300,
+#    'safaribooks.pipelines.SomePipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

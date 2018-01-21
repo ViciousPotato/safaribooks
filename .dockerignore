@@ -1,0 +1,6 @@
+.git/
+.gitignore
+converted/
+Dockerfile
+README.md
+*.sublime-*
