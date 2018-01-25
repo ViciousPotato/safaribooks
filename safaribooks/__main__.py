@@ -8,20 +8,24 @@ from scrapy.utils.project import get_project_settings
 
 
 def download_epub(args):
-    if not args.user:
-        raise ValueError('argument -u/--user is required for downloading')
-    if not args.password:
-        raise ValueError('argument -p/--password is required for downloading')
+    if not args.user and not args.cookie:
+        raise ValueError('argument -u/--user or -c/--cookie is required for downloading')
+    if not args.password and args.user:
+        raise ValueError('argument -p/--password with -u/--user or -c/--cookie is required for downloading')
+    if args.password and not args.user:
+        raise ValueError('argument -u/--user with -p/--password or -c/--cookie is required for downloading')
     if not args.book_id:
         raise ValueError('argument -b/--book-id is required for downloading')
+
 
     process = CrawlerProcess(get_project_settings())
     process.crawl(
         'SafariBooks',
         user=args.user,
         password=args.password,
+        cookie=args.cookie,
         bookid=args.book_id,
-        output_directory=args.output_directory,
+        output_directory=args.output_directory
     )
     process.start()
     return process
@@ -78,8 +82,12 @@ parser.add_argument(
 parser.add_argument(
     '-b',
     '--book-id',
-    type=int,
     help='Safari Books Online book ID',
+)
+parser.add_argument(
+    '-c',
+    '--cookie',
+    help='Safari Books Online SSO cookie',
 )
 
 subparsers = parser.add_subparsers()
