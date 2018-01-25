@@ -49,11 +49,13 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         self,
         user,
         password,
+        cookie,
         bookid,
-        output_directory=None,
+        output_directory=None
     ):
         self.user = user
         self.password = password
+        self.cookie = cookie
         self.bookid = str(bookid)
         self.output_directory = utils.mkdirp(
             output_directory or tempfile.mkdtemp()
@@ -76,16 +78,24 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         shutil.copytree(utils.pkg_path('data/'), self.tmpdir)
 
     def parse(self, response):
-        return scrapy.FormRequest.from_response(
-            response,
-            formdata={'email': self.user, 'password1': self.password},
-            callback=self.after_login
-        )
+
+        cookies = dict(x.strip().split('=') for x in self.cookie.split(';')) if self.cookie is not None else {}
+
+        return scrapy.Request(url=self.host + 'home', 
+            callback=self.after_login,
+            cookies=cookies,
+            headers={
+                'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
+            })
+
 
     def after_login(self, response):
         # Loose role to decide if user signed in successfully.
-        if '/login' in response.url:
+        if response.status == 401:
             self.logger.error('Failed login')
+            return
+        elif response.status != 200:
+            self.logger.error('Something went wrong')
             return
         yield scrapy.Request(
             self.toc_url + self.bookid,
