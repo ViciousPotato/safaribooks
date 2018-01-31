@@ -78,19 +78,25 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         shutil.copytree(utils.pkg_path('data/'), self.tmpdir)
 
     def parse(self, response):
+        if self.cookie is not None:
+            cookies = dict(x.strip().split('=') for x in self.cookie.split(';'))
 
-        cookies = dict(x.strip().split('=') for x in self.cookie.split(';')) if self.cookie is not None else {}
+            return scrapy.Request(url=self.host + 'home', 
+                callback=self.after_login,
+                cookies=cookies,
+                headers={
+                    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
+                })
 
-        return scrapy.Request(url=self.host + 'home', 
-            callback=self.after_login,
-            cookies=cookies,
-            headers={
-                'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
-            })
+        return scrapy.FormRequest.from_response(
+              response,
+              formdata={'email': self.user, 'password1': self.password},
+              callback=self.after_login
+        )
 
 
     def after_login(self, response):
-        # Loose role to decide if user signed in successfully.
+        # Loose rule to decide if user signed in successfully.
         if response.status == 401:
             self.logger.error('Failed login')
             return

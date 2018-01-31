@@ -12,11 +12,13 @@ WARNING: use at your own risk.
 
 2. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
 
-   `pip install safaribooks`
+   `pip install safaribooks/`
+
+   safaribooks is the folder you checkout the code.
 
 3. Download a book.
 
-  `safaribooks -u USER/EMAIL -p PASSWORD -b BOOK_ID`.
+  `safaribooks -u USER/EMAIL -p PASSWORD -b BOOK_ID download-epub`.
 
    `BOOK_ID` is the id in url such as `9781617291920` in `https://www.safaribooksonline.com/library/view/real-world-machine-learning/9781617291920/kindle_split_011.html`.
 
