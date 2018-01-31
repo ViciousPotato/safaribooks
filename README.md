@@ -36,7 +36,7 @@ This should work no matter platform you're on as no dependencies other than `doc
 ## Command line usage
 
 ```
-usage: safaribooks [-h] [-o OUTPUT_DIRECTORY] [-u USER] [-p PASSWORD]
+usage: safaribooks [-h] [-o OUTPUT_DIRECTORY] [-u USER] [-p PASSWORD] [-c COOKIE]
                    [-b BOOK_ID]
                    {download-epub,download,convert-to-mobi} ...
 
@@ -58,6 +58,12 @@ optional arguments:
                         Safari Books Online password
   -b BOOK_ID, --book-id BOOK_ID
                         Safari Books Online book ID
+  -c COOKIE, --cookie COOKIE 
+                        Safari Books Online Cookie. This filed can be retrieved by
+                        using Chrome and copying request as curl. Cookie input should
+                        be included in ''.
+                        Example:
+                        'BrowserCookie=XXXXXXXXXXXXXXXXXXXXX; sessionid=XXXXXXXXXXXXXXXXX;' etc.
 ```
 
 Create an issue if you find it does not work!
