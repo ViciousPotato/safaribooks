@@ -9,14 +9,16 @@ WARNING: use at your own risk.
 1. If you want Kindle mobi output, download kindlegen from Amazon and put the binary somewhere in PATH.
 
    If you only need epub books this step can be skipped.
+   
+2. Clone the safaribooks repo and change into that directory.
 
-2. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
+3. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
 
    `pip install safaribooks/`
 
    safaribooks is the folder you checkout the code.
 
-3. Download a book.
+4. Download a book.
 
   `safaribooks -u USER/EMAIL -p PASSWORD -b BOOK_ID download-epub`.
 
