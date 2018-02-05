@@ -10,7 +10,7 @@ WARNING: use at your own risk.
 
    If you only need epub books this step can be skipped.
    
-2. Clone the safaribooks repo, let's say to safaribooks/ directory.
+2. Clone the safaribooks repo, let's say to `safaribooks/` directory.
 
 3. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
 
