@@ -13,15 +13,18 @@ from bs4 import BeautifulSoup
 
 from .. import utils
 
+DEFAULT_STYLE = """
+p.pre {
+  font-family: monospace;
+  white-space: pre;
+}"""
+
 PAGE_TEMPLATE = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
         <title></title>
         <style>
-        p.pre {
-            font-family: monospace;
-            white-space: pre;
-        }
+        {{style}}
         </style>
     </head>
     {{body}}
@@ -62,6 +65,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         )
         self.book_name = ''
         self.epub_path = ''
+        self.style = ''
         self.info = {}
         self._stage_toc = False
         self.tmpdir = tempfile.mkdtemp()
@@ -126,6 +130,17 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
     def parse_page_json(self, title, bookid, response):
         page_json = json.loads(response.body)
+
+	style_sheets = page_json.get('stylesheets', [])
+	style_sheets_paths = []
+
+        for style_sheet in style_sheets:
+            style_sheets_paths.append(style_sheet['full_path'])
+            yield scrapy.Request(
+                style_sheet['url'], # I don't know when style_sheets will have multiple elements
+                callback=partial(self.load_page_style, style_sheet['full_path'])
+            )
+        
         yield scrapy.Request(
             page_json['content'],
             callback=partial(
@@ -134,10 +149,18 @@ class SafariBooksSpider(scrapy.spiders.Spider):
                 bookid,
                 page_json['full_path'],
                 page_json['images'],
-            ),
+                style_sheets_paths
+            )
         )
 
-    def parse_page(self, title, bookid, path, images, response):
+    def load_page_style(self, full_path, response):
+        # TODO: obviously the best approach is to create file for styles
+        # and share them in the downloaded files. But you need to carefully calculates the relative path.
+        # For now just append to self.style
+        self.style += response.body
+
+
+    def parse_page(self, title, bookid, path, images, style, response):
         template = Template(PAGE_TEMPLATE)
 
         # path might have nested directory
@@ -152,7 +175,8 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         oebps_body_path = os.path.join(self.tmpdir, 'OEBPS', path)
         with codecs.open(oebps_body_path, 'wb', 'utf-8') as fh:
             body = BeautifulSoup(response.body, 'lxml').find('body')
-            fh.write(template.render(body=body))
+            style = self.style if self.style != '' else DEFAULT_STYLE
+            fh.write(template.render(body=body, style=style))
 
         for img in images:
             if not img:
