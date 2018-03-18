@@ -131,8 +131,8 @@ class SafariBooksSpider(scrapy.spiders.Spider):
     def parse_page_json(self, title, bookid, response):
         page_json = json.loads(response.body)
 
-	style_sheets = page_json.get('stylesheets', [])
-	style_sheets_paths = []
+        style_sheets = page_json.get('stylesheets', [])
+        style_sheets_paths = []
 
         for style_sheet in style_sheets:
             style_sheets_paths.append(style_sheet['full_path'])
@@ -140,7 +140,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
                 style_sheet['url'], # I don't know when style_sheets will have multiple elements
                 callback=partial(self.load_page_style, style_sheet['full_path'])
             )
-        
+
         yield scrapy.Request(
             page_json['content'],
             callback=partial(
