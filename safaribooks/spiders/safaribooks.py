@@ -13,6 +13,14 @@ from bs4 import BeautifulSoup
 
 from .. import utils
 
+#Fix for UTF-8 encoding error when loading content
+#Error: UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 13654: ordinal not in range(128)
+import sys  
+
+reload(sys)  
+sys.setdefaultencoding('utf8')
+#End of fix for UTF-8 encoding error
+
 DEFAULT_STYLE = """
 p.pre {
   font-family: monospace;
