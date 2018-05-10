@@ -115,7 +115,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
     def parse_cover_img(self, name, response):
         # inspect_response(response, self)
         cover_img_path = os.path.join(self.tmpdir, 'OEBPS', 'cover-image.jpg')
-        with open(cover_img_path, 'w') as fh:
+        with open(cover_img_path, 'wb') as fh:
             fh.write(response.body)
 
     def parse_content_img(self, img, response):
