@@ -14,7 +14,8 @@ WARNING: use at your own risk.
 
 3. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
 
-   `pip install safaribooks/`
+   `cd safaribooks`
+   `pip install .`
 
    safaribooks is the folder you checkout the code.
 

@@ -174,8 +174,9 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
         oebps_body_path = os.path.join(self.tmpdir, 'OEBPS', path)
         with codecs.open(oebps_body_path, 'wb', 'utf-8') as fh:
-            body = BeautifulSoup(response.body, 'lxml').find('body')
+            body = str(BeautifulSoup(response.body, 'lxml').find('body')).decode('utf8')
             style = self.style if self.style != '' else DEFAULT_STYLE
+            style=style.decode('utf8')
             fh.write(template.render(body=body, style=style))
 
         for img in images:
