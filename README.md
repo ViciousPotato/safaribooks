@@ -15,11 +15,12 @@ WARNING: use at your own risk.
 3. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
 
    `cd safaribooks`
+   
    `pip install .`
 
    safaribooks is the folder you checkout the code.
 
-4. Download a book.
+4. Download a book (run this in the folder you checked out the code).
 
   `safaribooks -u USER/EMAIL -p PASSWORD -b BOOK_ID download-epub`.
 
