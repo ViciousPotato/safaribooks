@@ -31,6 +31,8 @@ WARNING: use at your own risk.
 
 ## Installation with docker
 
+With credit to @jmagnusson
+
 This should work no matter platform you're on as no dependencies other than `docker` needs to be installed.
 
 1. Run `docker build -t safaribooks .`
