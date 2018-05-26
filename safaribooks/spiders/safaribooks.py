@@ -40,6 +40,11 @@ PAGE_TEMPLATE = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 #     idx = len(u)
 #   return u[:idx]
 
+def decode(s):
+    try:
+        return s.decode("utf8")
+    except:
+        return s
 
 class SafariBooksSpider(scrapy.spiders.Spider):
     toc_url = 'https://www.safaribooksonline.com/nest/epub/toc/?book_id='
@@ -174,9 +179,9 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
         oebps_body_path = os.path.join(self.tmpdir, 'OEBPS', path)
         with codecs.open(oebps_body_path, 'wb', 'utf-8') as fh:
-            body = str(BeautifulSoup(response.body, 'lxml').find('body')).decode('utf8')
+            body = decode(str(BeautifulSoup(response.body, 'lxml').find('body')))
             style = self.style if self.style != '' else DEFAULT_STYLE
-            style=style.decode('utf8')
+            style = decode(style)
             fh.write(template.render(body=body, style=style))
 
         for img in images:
