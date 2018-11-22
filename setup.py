@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='safaribooks',
-    version='0.1.0',
+    version='0.1.1',
     description='Downloads and converts Safari Book Online books',
     long_description=__doc__,
     packages=find_packages(),

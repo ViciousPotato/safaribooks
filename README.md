@@ -9,14 +9,20 @@ WARNING: use at your own risk.
 1. If you want Kindle mobi output, download kindlegen from Amazon and put the binary somewhere in PATH.
 
    If you only need epub books this step can be skipped.
+   
+2. Clone the safaribooks repo, let's say to `safaribooks/` directory.
 
-2. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
+3. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
 
-   `pip install safaribooks`
+   `cd safaribooks`
+   
+   `pip install .`
 
-3. Download a book.
+   safaribooks is the folder you checkout the code.
 
-  `safaribooks -u USER/EMAIL -p PASSWORD -b BOOK_ID`.
+4. Download a book (run this in the folder you checked out the code).
+
+  `safaribooks -u USER/EMAIL -p PASSWORD -b BOOK_ID download-epub`.
 
    `BOOK_ID` is the id in url such as `9781617291920` in `https://www.safaribooksonline.com/library/view/real-world-machine-learning/9781617291920/kindle_split_011.html`.
 
@@ -24,6 +30,8 @@ WARNING: use at your own risk.
 
 
 ## Installation with docker
+
+With credit to @jmagnusson
 
 This should work no matter platform you're on as no dependencies other than `docker` needs to be installed.
 
