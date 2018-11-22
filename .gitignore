@@ -102,3 +102,4 @@ ENV/
 
 # Converted files
 /converted/
+/dump/

@@ -51,7 +51,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
     name = 'SafariBooks'
     # allowed_domains = []
     start_urls = ['https://www.safaribooksonline.com/']
-    host = 'https://www.safaribooksonline.com/'
+    host = 'https://www.safaribooksonline.com'
 
     def __init__(
         self,
@@ -90,7 +90,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         if self.cookie is not None:
             cookies = dict(x.strip().split('=') for x in self.cookie.split(';'))
 
-            return scrapy.Request(url=self.host + 'home', 
+            return scrapy.Request(url=self.host + '/home', 
                 callback=self.after_login,
                 cookies=cookies,
                 headers={
