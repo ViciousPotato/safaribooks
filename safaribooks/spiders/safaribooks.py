@@ -50,8 +50,8 @@ class SafariBooksSpider(scrapy.spiders.Spider):
     toc_url = 'https://www.safaribooksonline.com/nest/epub/toc/?book_id='
     name = 'SafariBooks'
     # allowed_domains = []
-    start_urls = ['https://www.safaribooksonline.com/']
-    host = 'https://www.safaribooksonline.com/'
+    start_urls = ['https://www.safaribooksonline.com/accounts/login']
+    host = 'https://www.safaribooksonline.com'
 
     def __init__(
         self,
