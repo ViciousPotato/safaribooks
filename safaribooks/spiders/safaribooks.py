@@ -162,7 +162,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         # TODO: obviously the best approach is to create file for styles
         # and share them in the downloaded files. But you need to carefully calculates the relative path.
         # For now just append to self.style
-        self.style += response.body
+        self.style += decode(response.body)
 
 
     def parse_page(self, title, bookid, path, images, style, response):
