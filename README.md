@@ -9,13 +9,13 @@ WARNING: use at your own risk.
 1. If you want Kindle mobi output, download kindlegen from Amazon and put the binary somewhere in PATH.
 
    If you only need epub books this step can be skipped.
-   
+
 2. Clone the safaribooks repo, let's say to `safaribooks/` directory.
 
 3. Make sure you have Python 2 installed (Tested version Python 2.7) then run:
 
    `cd safaribooks`
-   
+
    `pip install .`
 
    safaribooks is the folder you checkout the code.
@@ -24,7 +24,7 @@ WARNING: use at your own risk.
 
   `safaribooks -u USER/EMAIL -p PASSWORD -b BOOK_ID download-epub`.
 
-   `BOOK_ID` is the id in url such as `9781617291920` in `https://www.safaribooksonline.com/library/view/real-world-machine-learning/9781617291920/kindle_split_011.html`.
+   `BOOK_ID` is the id in url such as `9781617291920` in `https://learning.oreilly.com/library/view/real-world-machine-learning/9781617291920/kindle_split_011.html`.
 
    An epub and a mobi file will be generated.
 
@@ -66,7 +66,7 @@ optional arguments:
                         Safari Books Online password
   -b BOOK_ID, --book-id BOOK_ID
                         Safari Books Online book ID
-  -c COOKIE, --cookie COOKIE 
+  -c COOKIE, --cookie COOKIE
                         Safari Books Online Cookie. This filed can be retrieved by
                         using Chrome and copying request as curl. Cookie input should
                         be included in ''.
