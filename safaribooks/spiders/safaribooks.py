@@ -47,11 +47,11 @@ def decode(s):
         return s
 
 class SafariBooksSpider(scrapy.spiders.Spider):
-    toc_url = 'https://www.safaribooksonline.com/nest/epub/toc/?book_id='
+    toc_url = 'https://learning.oreilly.com/nest/epub/toc/?book_id='
     name = 'SafariBooks'
     # allowed_domains = []
-    start_urls = ['https://www.safaribooksonline.com/']
-    host = 'https://www.safaribooksonline.com/'
+    start_urls = ['https://learning.oreilly.com/']
+    host = 'https://learning.oreilly.com'
 
     def __init__(
         self,
@@ -64,6 +64,9 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         self.user = user
         self.password = password
         self.cookie = cookie
+        self.logger.info(
+            self.cookie
+        )
         self.bookid = str(bookid)
         self.output_directory = utils.mkdirp(
             output_directory or tempfile.mkdtemp()
@@ -90,7 +93,7 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         if self.cookie is not None:
             cookies = dict(x.strip().split('=') for x in self.cookie.split(';'))
 
-            return scrapy.Request(url=self.host + 'home', 
+            return scrapy.Request(url=self.host + '/home', 
                 callback=self.after_login,
                 cookies=cookies,
                 headers={
