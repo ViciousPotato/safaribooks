@@ -100,5 +100,8 @@ ENV/
 # mypy
 .mypy_cache/
 
+# Mac Stuff
+.DS_Store
+
 # Converted files
 /converted/
