@@ -1,3 +1,5 @@
+**THIS PROJECT IS DISCONTINUED, PLEASE CHECKOUT https://github.com/lorenzodifuccia/safaribooks WHICH IS MORE ACTIVELY MAITAINED AND AVAILABLE ON PYPI!**
+
 # safaribooks
 Convert safaribooksonline ebook to epub and Kindle mobi format
 
