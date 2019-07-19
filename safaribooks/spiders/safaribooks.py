@@ -46,12 +46,16 @@ def decode(s):
     except:
         return s
 
+class Chapter:
+    id:''
+    href:''
+
 class SafariBooksSpider(scrapy.spiders.Spider):
-    toc_url = 'https://learning.oreilly.com/nest/epub/toc/?book_id='
+    toc_url = 'https://learning.oreilly.com/api/v1/book/'
     name = 'SafariBooks'
     # allowed_domains = []
-    start_urls = ['https://learning.oreilly.com']
-    host = 'https://learning.oreilly.com'
+    start_urls = ['https://www.oreilly.com/member/']
+    host = 'https://www.safaribooksonline.com/'
 
     def __init__(
         self,
@@ -88,19 +92,29 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
     def parse(self, response):
         if self.cookie is not None:
-            cookies = dict(x.strip().split('=') for x in self.cookie.split(';'))
+            # cookies = dict(x.strip().split('=') for x in self.cookie.split(';'))
 
-            return scrapy.Request(url=self.host + 'home',
+            return scrapy.Request(url=self.host + 'home', 
                 callback=self.after_login,
-                cookies=cookies,
+                cookies=self.cookie,
                 headers={
                     'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
                 })
 
-        return scrapy.FormRequest.from_response(
-              response,
-              formdata={'email': self.user, 'password1': self.password},
-              callback=self.after_login
+        return scrapy.Request(
+            url='https://www.oreilly.com/member/auth/login/',
+            callback=self.after_login,
+            method="POST",            
+            headers={
+                'Origin':'https://oreilly.com',
+                'Referer': 'https://www.oreilly.com/member/',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': 'en-US,en;q=0.9',         
+                'content-type': 'application/json',
+                'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
+            },
+            body='{"email":"'+ self.user +'","password":"'+self.password+'"}'
+
         )
 
 
@@ -112,9 +126,13 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         elif response.status != 200:
             self.logger.error('Something went wrong')
             return
+        
+        self.cookie = dict(str(x).strip().split(';')[0].split('=') for x in response.headers.getlist('Set-Cookie'))
+
         yield scrapy.Request(
-            self.toc_url + self.bookid,
+            url=self.toc_url + self.bookid+'/',
             callback=self.parse_toc,
+            cookies=self.cookie
         )
 
     def parse_cover_img(self, name, response):
@@ -207,40 +225,43 @@ class SafariBooksSpider(scrapy.spiders.Spider):
 
         self._stage_toc = True
 
-        self.book_name = toc['title_safe']
+        self.book_name = toc['title']
         self.book_title = re.sub(r'["%*/:<>?\\|~\s]', r'_', toc['title'])  # to be used for filename
 
-        cover_path, = re.match(
-            r'<img src="(.*?)" alt.+',
-            toc['thumbnail_tag'],
-        ).groups()
+        cover_path= toc['cover']
 
         yield scrapy.Request(
-            self.host + cover_path,
+            url=cover_path,
+            cookies=self.cookie,
             callback=partial(self.parse_cover_img, 'cover-image'),
         )
-
-        for item in toc['items']:
+        items=[];
+        for item in toc['chapters']:
+            splited = item.split('/')
+            ch = Chapter()
+            ch.id =splited[-1]
+            ch.href =  ch.id if splited[-2] =='chapter' else splited[-2]+'/'+splited[-1]
+            items.append(ch)
             yield scrapy.Request(
-                self.host + item['url'],
+                url=item,
+                cookies=self.cookie,
                 callback=partial(
                     self.parse_page_json,
-                    toc['title_safe'],
-                    toc['book_id'],
+                    toc['title'],
+                    toc['identifier'],
                 ),
             )
-
         content_path = os.path.join(self.tmpdir, 'OEBPS', 'content.opf')
         with open(content_path) as fh:
             template = Template(fh.read())
         with codecs.open(content_path, 'wb', 'utf-8') as fh:
-            fh.write(template.render(info=toc))
+            fh.write(template.render(info=toc,chapters=items))
 
         toc_path = os.path.join(self.tmpdir, 'OEBPS', 'toc.ncx')
         with open(toc_path) as fh:
             template = Template(fh.read())
         with codecs.open(toc_path, 'wb', 'utf-8') as fh:
-            fh.write(template.render(info=toc))
+            fh.write(template.render(info=toc,chapters=items))
 
     def closed(self, reason):
         if self._stage_toc is False:
@@ -258,3 +279,4 @@ class SafariBooksSpider(scrapy.spiders.Spider):
         )
         self.logger.info('Moving {0} to {1}'.format(zip_path, self.epub_path))
         shutil.move(zip_path, self.epub_path)
+
