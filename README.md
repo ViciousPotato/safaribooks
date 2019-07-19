@@ -1,4 +1,6 @@
-**THIS PROJECT IS DISCONTINUED, PLEASE CHECKOUT https://github.com/lorenzodifuccia/safaribooks WHICH IS MORE ACTIVELY MAITAINED AND AVAILABLE ON PYPI!**
+This fork updated the safaribook login and EPUB template and it is working as it July 2019
+
+
 
 # safaribooks
 Convert safaribooksonline ebook to epub and Kindle mobi format
