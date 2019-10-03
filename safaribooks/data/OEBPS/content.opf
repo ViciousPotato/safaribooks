@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="bookid">
   <metadata>
-    <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="bookid">urn:isbn:{{info["book_id"]}}</dc:identifier>
+    <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="bookid">urn:isbn:{{info["isbn"]}}</dc:identifier>
     <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["title"]|escape}}</dc:title>
     <!-- <dc:rights xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:rights> -->
-    <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["publisher"]["name"]|escape}}</dc:publisher>
+    <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["publishers"][0]["name"]|escape}}</dc:publisher>
     <!-- <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:subject> -->
-    <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["pub_date"]}}</dc:date>
+    <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">{{info["issued"]}}</dc:date>
     <!-- <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:description> -->
-    <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf" opf:file-as="Douglas Crockford">{{info["authors"]}}</dc:creator>
+    <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf" opf:file-as="Douglas Crockford">{{info["authors"][0]["name"]}}</dc:creator>
     <dc:language xmlns:dc="http://purl.org/dc/elements/1.1/">en</dc:language>
     <meta name="cover" content="cover-image"/>
   </metadata>
   <manifest>
     <item id="ncxtoc" media-type="application/x-dtbncx+xml" href="toc.ncx"/>
     <item id="cover-image" href="cover-image.jpg" media-type="image/jpeg"/>
-    {% for item in info["items"] %}
-    <item id="{{item["id"]}}" href="{{item["href"].split('#')[0]}}" media-type="{{item["media_type"]}}"/>
+    {% for item in chapters %}
+    <item id="{{item.id}}" href="{{item.href}}" media-type="application/xhtml+xml"/>
     {% endfor %}
   </manifest>
   <spine toc="ncxtoc">
     <itemref idref="cover-image" linear="no"/>
-    {% for item in info["items"] %}
-    {% if item["media_type"] == 'application/xhtml+xml' %}
-    <itemref idref="{{item["id"]}}"/>
-    {% endif %}
+    {% for item in chapters %}
+    <itemref idref="{{item.id}}"/>
     {% endfor %}
   </spine>
 </package>
