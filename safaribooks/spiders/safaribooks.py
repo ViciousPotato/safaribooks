@@ -47,8 +47,8 @@ def decode(s):
         return s
 
 class Chapter:
-    id:''
-    href:''
+    id=''
+    href=''
 
 class SafariBooksSpider(scrapy.spiders.Spider):
     toc_url = 'https://learning.oreilly.com/api/v1/book/'
