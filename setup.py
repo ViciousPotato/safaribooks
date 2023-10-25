@@ -20,7 +20,7 @@ setup(
     },
     install_requires=[
         'scrapy>=1.4.0',
-        'twisted==16.4.1',
+        'twisted==23.8.0',
         'jinja2',
         'beautifulsoup4',
     ],
